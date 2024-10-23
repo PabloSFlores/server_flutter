@@ -47,3 +47,32 @@ exports.loginUser = async (req, res) => {
         token: generateToken(userExists._id)
     });
 }
+
+exports.getUserProfile = async (req, res) => {
+    try {
+        const user = req.user;
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({ message: `Error: ${error}` });
+    }
+};
+
+exports.updateUserProfile = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const user = req.user;
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+
+        const updatedUser = await user.save();
+
+        return res.status(200).json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Error: ${error}` });
+    }
+};
